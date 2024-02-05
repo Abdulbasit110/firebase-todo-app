@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/daisyui@4.6.1/dist/full.min.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>FIREBASE TODO</title>
+  </head>
+  <body>
+    <div class="flex flex-column justify-center mt-20">
+      <input
+        id="todoInput"
+        type="text"
+        placeholder="Type here"
+        class="input input-bordered w-full max-w-xs me-2"
+      />
+      <button id="addButton" class="btn btn-success">Add</button>
+    </div>
+    <div class="todo-container flex justify-center">
+      <ul id="todos" class="flex-column"></ul>
+    </div>
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>

@@ -7,6 +7,7 @@ import {
   query,
   onSnapshot,
   deleteDoc,
+  setDoc,
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -27,19 +28,6 @@ const input = document.getElementById("todoInput");
 const addButton = document.getElementById("addButton");
 const todos = document.getElementById("todos");
 
-// adding to firebase
-const add = async () => {
-  const id = new Date().getTime();
-  const todo = {
-    todo: input.value,
-    time: new Date().toLocaleString(),
-    id,
-  };
-  if (todo) {
-    await addDoc(collection(db, "todos"), todo);
-    input.value = "";
-  }
-};
 // reading realtime data
 const readTodo = async () => {
   let item = "";
@@ -59,20 +47,52 @@ const readTodo = async () => {
 
     todos.innerHTML = item;
 
-    const deleteButtons = todos.getElementsByTagName("button");
+    const deleteButtons = todos.querySelectorAll("button");
 
-    for (let button of deleteButtons) {
-      button.addEventListener("click", async (e) => {
-        const id = e.target.parentElement.getAttribute("data-id");
-        await deleteDoc(doc(db, "todos", `${id}`));
-        console.log("deleted");
+    deleteButtons.forEach((button, i) => {
+      button.addEventListener("click", async () => {
+        const id = cities[i].id;
+        deleteTodo(id);
       });
-    }
+    });
   });
 };
 
 readTodo();
 
+// adding to firebase
+const add = async () => {
+  const id = new Date().getTime();
+  const todo = {
+    todo: input.value,
+    time: new Date().toLocaleString(),
+    id,
+  };
+  if (todo) {
+    await setDoc(doc(db, "todos", `${id}`), todo);
+    input.value = "";
+  }
+};
+
+// delete function
+const deleteTodo = async (id) => {
+  try {
+    // Delete the document from Firestore
+    await deleteDoc(doc(db, "todos", `${id}`));
+    console.log("Document successfully deleted from Firestore!", id);
+
+    // Remove the corresponding <li> element from the screen
+    const li = document.querySelector(`[data-id="${id}"]`);
+    if (li) {
+      li.remove();
+      console.log("Element removed from the screen!");
+    }
+  } catch (error) {
+    console.error("Error deleting document: ", error);
+  }
+};
+
+// realtime changes
 const changes = async () => {
   const q = query(collection(db, "todos"));
   const unsubscribe = onSnapshot(q, (snapshot) => {
